@@ -5,3 +5,13 @@ xcuserdata/
 DerivedData/
 *.xcodeproj
 *.xcworkspace
+
+# Build artifacts
+*.app
+*.dmg
+temp_dmg/
+icon-assets/
+*.iconset
+
+# Icon files (keep Iris.icns but ignore generated ones)
+AppIcon.icns
