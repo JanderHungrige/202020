@@ -15,6 +15,8 @@ echo "Creating DMG..."
 if [ ! -d "${BUNDLE_NAME}" ]; then
     echo "App bundle not found. Creating it first..."
     ./create-app.sh
+else
+    echo "Using existing app bundle (icon will be included if present in .app)"
 fi
 
 # Remove existing DMG if it exists
@@ -25,7 +27,7 @@ TEMP_DMG_DIR="temp_dmg"
 rm -rf "${TEMP_DMG_DIR}"
 mkdir -p "${TEMP_DMG_DIR}"
 
-# Copy app to temp directory
+# Copy app to temp directory (includes icon if it was added during create-app.sh)
 cp -R "${BUNDLE_NAME}" "${TEMP_DMG_DIR}/"
 
 # Create Applications symlink

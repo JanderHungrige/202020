@@ -22,6 +22,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Hide dock icon
         NSApp.setActivationPolicy(.accessory)
         
+        // Prevent app from terminating when windows close
+        // This is crucial for menu bar apps
+        NSApp.delegate = self
+        
         // Initialize managers
         timerManager = TimerManager(settingsManager: settingsManager)
         postureReminderManager = PostureReminderManager.shared
@@ -45,6 +49,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if settingsManager.postureReminderEnabled {
             postureReminderManager?.start()
         }
+    }
+    
+    // Prevent app from terminating when the last window closes
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return false
+    }
+    
+    // Prevent automatic termination
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        // Don't reopen windows automatically, but keep the app running
+        return false
     }
     
     func applicationWillTerminate(_ notification: Notification) {

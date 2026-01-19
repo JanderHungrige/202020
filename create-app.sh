@@ -19,6 +19,21 @@ if [ ! -f "${BUILD_DIR}/${APP_NAME}" ]; then
     exit 1
 fi
 
+# Use iris.icns as the app icon (check for both lowercase and capitalized)
+ICON_NAME=""
+if [ -f "iris.icns" ]; then
+    ICON_NAME="iris.icns"
+elif [ -f "Iris.icns" ]; then
+    ICON_NAME="Iris.icns"
+fi
+
+if [ -z "${ICON_NAME}" ]; then
+    echo "⚠️  Warning: iris.icns or Iris.icns not found. App will use system default icon."
+    echo "   Place iris.icns in this directory and run ./create-app.sh again."
+else
+    echo "✅ Found icon: ${ICON_NAME}"
+fi
+
 echo "Creating .app bundle structure..."
 
 # Remove existing bundle if it exists
@@ -31,6 +46,12 @@ mkdir -p "${RESOURCES_DIR}"
 # Copy executable
 cp "${BUILD_DIR}/${APP_NAME}" "${MACOS_DIR}/${APP_NAME}"
 chmod +x "${MACOS_DIR}/${APP_NAME}"
+
+# Copy icon if it exists (always name it iris.icns in the bundle)
+if [ -n "${ICON_NAME}" ] && [ -f "${ICON_NAME}" ]; then
+    cp "${ICON_NAME}" "${RESOURCES_DIR}/iris.icns"
+    echo "✅ Icon copied to app bundle as iris.icns"
+fi
 
 # Create Info.plist
 cat > "${BUNDLE_DIR}/Info.plist" << EOF
@@ -62,6 +83,17 @@ cat > "${BUNDLE_DIR}/Info.plist" << EOF
     <true/>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © 2024</string>
+EOF
+
+# Add icon reference if icon exists
+if [ -n "${ICON_NAME}" ] && [ -f "${ICON_NAME}" ]; then
+    cat >> "${BUNDLE_DIR}/Info.plist" << EOF
+    <key>CFBundleIconFile</key>
+    <string>iris</string>
+EOF
+fi
+
+cat >> "${BUNDLE_DIR}/Info.plist" << EOF
 </dict>
 </plist>
 EOF
